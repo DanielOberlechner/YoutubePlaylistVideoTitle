@@ -16,3 +16,7 @@ This Software runs only in Python3.
 Greets by Daniel Oberlechner
 
 Feel free to copy, extend or write changes to this code.
+
+Here a Example from a random Music Playlist I created:
+
+<img src="Example.png">
