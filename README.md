@@ -11,9 +11,13 @@ This key you will have to insert into the properly section into the index.py.
 
 Then you are able to use the program and you will get the videos promped into the terminal in which you're using python.
 
+Restrictions:
 This Software runs only in Python3.
+If the playlist contains deleted videos it will abort when it reaches such a video. You will have to save the playlist into your account and the manually delete those videos.
 
 Greets by Daniel Oberlechner
+
+
 
 Feel free to copy, extend or write changes to this code.
 
