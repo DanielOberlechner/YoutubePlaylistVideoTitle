@@ -23,4 +23,6 @@ Feel free to copy, extend or write changes to this code.
 
 Here a Example from a random Music Playlist I created:
 
+*Now the Program creates a file with all video titles in it. It has the current date as filename...
+
 <img src="Example.png">
