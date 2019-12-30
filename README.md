@@ -1,28 +1,42 @@
-# YoutubePlaylistVideoTitle
+# YoutubePlaylistVideoTitle - For Music Playlists
 This Program copy's all video titles of a youtube playlist. 
-This is important because sometimes youtube deletes music titles and so you can not see which video exactly got deleted. 
+This is important because sometimes youtube deletes music titles or a user sets a video as private and so you can not see which video exactly is missing in your playlist.
 
-With this Python Programm u can save all video titles and if one gets deleted watch in ur list which one it was...
+This short script saves all video names from a playlist into a file which has the current date as name into the directory in which the script is running.
 
-To use this software you must go to https://console.developers.google.com/project and create a new project.
-Then you will have to go to the API Keys section and create a new youtube Data API v3 key.
+If a video from your playlist gets deleted you can use the created file to lookup which one it was and then search for the same video from a different uploader and add it again to your music playlist.
 
-This key you will have to insert into the properly section into the index.py.
+## Requirements
+First you'll need a Google Account and then go to https://console.developers.google.com/project and create a new project.
+Then go to the API Keys section and create a new Youtube Data API v3 key. All of this is of course free.
 
-Then you are able to use the program and you will get the videos promped into the terminal in which you're using python.
+Insert this key into the index.py and search for the 'apiKey' variable which is on the top of the script.
+Then you need your playlist url which should be looking like the one below:
+https://www.youtube.com/watch?v=SlPhMPnQ58k&list=PLx0sYbCqOb8TBPRdmBHs5Iftvv9TPboYG
 
-Restrictions:
-This Software runs only in Python3.
-If the playlist contains deleted videos it will abort when it reaches such a video. You will have to save the playlist into your account and the manually delete those videos.
+What is important is the string after 'list=', so in this case the pure playlist ID would be the followning:
+PLx0sYbCqOb8TBPRdmBHs5Iftvv9TPboYG
 
-Greets by Daniel Oberlechner
+This string you have to insert into the index.py and there into playlistId variable.
 
+### Restrictions:
+This Software needs Python3 to run.
+
+If the playlist contains deleted or private videos it will abort when it reaches such a video. 
+It should throw an out of index error.
+
+If a video from a playlist which isn't from your account you have to save the foreign playlist into your account.
+When thats done you can now delete videos which aren't available anymore.
+
+For questions or comments you can create a issue or reach me here:
+https://twitter.com/danielthehok
+
+Greets by 
+Daniel Oberlechner
 
 
 Feel free to copy, extend or write changes to this code.
 
-Here a Example from a random Music Playlist I created:
-
-*Now the Program creates a file with all video titles in it. It has the current date as filename...
+Below you can see an example output:
 
 <img src="Example.png">
