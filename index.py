@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
-# NOTICE: the playlist shall not contain deleted videos if so the program won't work correct - throw's a out of index error
 
 import requests
 import json
 import datetime
 import shutil
+import os
+import glob
 
 currentDate = datetime.datetime.now().strftime("%d %B %Y.txt")
 apiKey = "AIzaSyCd3VTnZ6hwGHKpUz52dsV8lrthFU3pUKU"
 playlistId = "PLuP1wAti74xC6WBir_ZnRQ0lMMNH9U0Hc" # random 200 pop songs on youtube
-
-file = open(currentDate, "w")
 part = "snippet"
+textFile = open(currentDate, "w")
+directory = "thumbnails"
 
 def doRequest(pageToken):
     url = (
@@ -30,34 +31,46 @@ def doRequest(pageToken):
     requestJSON = json.loads(result.content)
     token = ""
     allVideoCounter = requestJSON["pageInfo"]["totalResults"]
+
     if "nextPageToken" in requestJSON:
         token = requestJSON["nextPageToken"]
-    print(requestJSON)
+
     for i in range(50):
         try:
             actualVideo = requestJSON["items"][i]["snippet"]["position"]
             actualTitle = requestJSON["items"][i]["snippet"]["title"]
             actualImage = requestJSON["items"][i]["snippet"]["thumbnails"]["default"]["url"]
 
-            image = requests.get(actualImage, stream=True)
-            with open(actualVideo + ".jpg", "wb") as out_file:
-                shutil.copyfileobj(image.raw, out_file)
-            del actualImage
+            image = requests.get(actualImage)
+            filer = open(str(actualVideo) + ".jpg", "wb")
+            filer.write(image.content)
+            filer.close()
 
             videoData = str(actualVideo) + " - " + actualTitle + "\n"
-
             print(videoData)
-            file.write(videoData)
+            textFile.write(videoData)
 
             if actualVideo == allVideoCounter - 1:
                 print("All Videos successfully displayed... Exit program")
                 break
-                exit(0)
+
         except:
-            print('A error has occured! continue with next video ...')
+            print("A error has occured! continue with next video ... " + videoData + " this video could have a problem")
             continue
+
     if token != "":
         doRequest(token)
 
-
 doRequest("")
+
+textFile.close()
+
+try:
+    os.mkdir(directory)
+    source = "*.jpg"
+    destination = directory
+    for elfile in glob.glob(r'*.jpg'):
+        shutil.move(elfile, destination)
+
+except:
+    print("could not create directory or move the images ...")
