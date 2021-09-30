@@ -76,6 +76,7 @@ def doRequest(elListo, pageToken=""):
 
             if actualTitle == "Deleted video" or actualTitle == "Private video":
                 videoData = str(actualVideoPostion) + " - " + actualTitle
+                print(videoData)
                 file = open(videoData + ".jpg", "wb")
                 file.write(thumbnail.content)
                 file.close()
