@@ -78,7 +78,7 @@ def doRequest(elListo, pageToken=""):
                 videoData = str(actualVideoPostion) + " - " + actualTitle
                 print(videoData)
                 file = open(videoData + ".jpg", "wb")
-                file.write(thumbnail.content)
+                # file.write(thumbnail.content)
                 file.close()
                 continue
 
