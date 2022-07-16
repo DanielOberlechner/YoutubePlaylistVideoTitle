@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import requests
-import json
 import datetime
-import shutil
 import os
-import glob
 
 from functions import slugify, getJSON
 
-currentDate = datetime.datetime.now().strftime("%d %B %Y.txt")
+currentDate = datetime.datetime.now().strftime("%Y-%m-%d.txt")
 apiKey = ""
 errorOccurred = False
 
@@ -23,6 +20,7 @@ allPlaylists = [Music, Random]
 
 part = "snippet"
 directory = "playlists"
+deletedVideos = 0
 
 def checkForPrivacy(playlistid):
     url = (
@@ -50,6 +48,7 @@ def checkForPrivacy(playlistid):
     else:
         doRequest(playlistid[0])
 
+
 def doRequest(elListo, pageToken=""):
     url = (
             "https://www.googleapis.com/youtube/v3/playlistItems?key="
@@ -71,7 +70,7 @@ def doRequest(elListo, pageToken=""):
 
         try:
             actualTitle = requestJSON["items"][i]["snippet"]["title"]
-            actualVideoPostion = requestJSON["items"][i]["snippet"]["position"]
+            actualVideoPostion = requestJSON["items"][i]["snippet"]["position"] + 1
             generalInformation = requestJSON["pageInfo"]["totalResults"]
 
             if actualTitle == "Deleted video" or actualTitle == "Private video":
@@ -80,6 +79,8 @@ def doRequest(elListo, pageToken=""):
                 file = open(videoData + ".jpg", "wb")
                 # file.write(thumbnail.content)
                 file.close()
+                global deletedVideos
+                deletedVideos += 1
                 continue
 
             actualChannelName = requestJSON["items"][i]["snippet"]["videoOwnerChannelTitle"]
@@ -124,6 +125,8 @@ def Work():
     os.chdir("playlists")
 
     for playlist in allPlaylists:
+        global deletedVideos
+        deletedVideos = 0
         if playlist[1] not in os.listdir(os.getcwd()):
             os.mkdir(playlist[1])
             os.chdir(playlist[1])
@@ -133,6 +136,9 @@ def Work():
             else:
                 os.chdir(currentDate)
             checkForPrivacy(playlist)
+            string = f"0 - the're {deletedVideos} deletedVideos"
+            file = open(string, "w")
+            file.close()
             os.chdir("../../")
         else:
             os.chdir(playlist[1])
@@ -142,6 +148,9 @@ def Work():
             else:
                 os.chdir(currentDate)
             checkForPrivacy(playlist)
+            string = f"0 - the're {deletedVideos} deletedVideos"
+            file = open(string, "w")
+            file.close()
             os.chdir("../../")
 
     finale()
