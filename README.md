@@ -2,12 +2,32 @@
 This Program is able to copy all video titles of multiple youtube playlists. 
 This is important because sometimes youtube deletes music titles or a user sets a video as private and so you can not see which video exactly is missing in your playlist.
 
-This short script saves all video names from multiple playlists into a directory and creates another with the current date.
+This short script saves all video names with the thumbnail as file from one or multiple playlists into a directory and creates another one with the current date.
 
-If a video from your playlist gets deleted you can use the created files to lookup which one it was and then search for the same video from a different uploader and add it again to your music playlist.
+I would recommend running a cron job on macOS or Linux which downloads your playlists maybe once every two weeks. For Windows users you'll have to create a scheduled task.
+
+### You'll have to run the index.py python script.
+
+
+
+If a video from your playlist gets deleted you can use the created files to lookup which one it was.
+
+Or even use the more convenient way and run the comparer.py which looks up your videos on the basis of your downloaded files and tells you which video number and video name is missing.
+
+With the help of the video number you can tell if it's a very old or a rather new video which is missing and with the video name and uploader account name you'll be able to quickly find the same or an alternate video.
 
 ## Requirements
-First you'll need a Google Account and then go to https://console.developers.google.com/project and create a new project.
+Your Youtube playlist MUST be sorted in a certain way:
+The newest video added to your playlist must be on top of it.
+That means if you open the playlist the newest video must be playing first.
+
+If you don't do this, the comparer.py will <b>NOT</b> work.
+You can sort your playlists in 5 different ways and to compare them is then a issue.
+Because you could change between running the main script the sort order and then nothing would work.
+
+<br>
+
+After that you'll need a Google Account and then go to https://console.developers.google.com/project and create a new project.
 Then go to the API Keys section and create a new Youtube Data API v3 key. All of this is of course free.
 
 Insert this key into the index.py and search for the 'apiKey' variable which is on the top of the script.
@@ -17,7 +37,7 @@ https://www.youtube.com/watch?v=SlPhMPnQ58k&list=PLx0sYbCqOb8TBPRdmBHs5Iftvv9TPb
 What is important is the string after 'list=', so in this case the pure playlist ID would be the following:
 PLx0sYbCqOb8TBPRdmBHs5Iftvv9TPboYG
 
-Lets make a clear example: <br />
+Let's make a clear example: <br />
 You have two playlists: <br />
 1x Music Playlist <br />
 1x Random Playlist <br />
