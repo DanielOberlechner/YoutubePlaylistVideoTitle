@@ -7,15 +7,17 @@ from decouple import config
 
 DEBUG = config("DEBUG", default=False, cast=bool)
 
+firstPlaylistWithoutUploader = []
+lastPlaylistWithoutUploader = []
+playlistWithoutUploader = []
 
 allPlaylists = os.listdir()
-
 os.chdir("playlists")
 
 
-def videoRemoveIndexNumber(video):
-    subString = re.findall(r"\d+ - ", video)
-    return video.replace(subString, "")
+# def videoRemoveIndexNumber(video):
+#     subString = re.findall(r"\d+ - ", video)
+#     return video.replace(subString, "")
 
 
 def getVideoIndexNumber(var):
@@ -23,21 +25,27 @@ def getVideoIndexNumber(var):
 
 
 def removeVideoIndex(playlist):
-    if playlist[0].getVideoIndexNumber == 0:
-        playlist[0].remove()
-    # Test if the two lines below do work for playlists which start with the highest number. Maybe this won't be even needed
-    elif playlist[-1].getVideoIndexNumber == 0:
-        playlist[-1].remove()
-    else:
-        print("Rare case: Could not found how many videos got deleted ...")
-        sys.exit()
+    playlist.pop()
     return playlist
 
 
-
-def compare(firstPlaylist, lastPlaylist):
-    print(firstPlaylist)
-    print(lastPlaylist)
+def removeUploader(playlist):
+    for video in playlist:
+        # print("video: ", video)
+        # ToDo:
+        # This regex could make problems with strange video titles I should redo this one
+        subString = re.findall(r" by.*", video)
+        # print("subString: ", subString)
+        if subString:
+            # print("subString is True")
+            playlistWithoutUploader.append(video.replace(subString[0], ""))
+            # print("This is the video title", video.replace(subString[0], ""))
+            # playlistWithoutUploader.append(video)
+        # print("subString:", type(subString[0]))
+    #     video.replace(subString, "")
+    #     playlistWithoutUploader.append(video)
+    # return playlistWithoutUploader
+    # print("playlistWithoutUploader: ", playlistWithoutUploader)
 
 
 def doWork():
@@ -51,8 +59,8 @@ def doWork():
     cleanedFirstList = []
     cleanedLastList = []
 
-    print(lista[0])
-    print(lista[-1])
+    # print(lista[0])
+    # print(lista[-1])
 
     # selects the first and last folder
     firstPlaylist = os.listdir(lista[0])
@@ -62,48 +70,65 @@ def doWork():
         return list(map(int, getVideoIndexNumber(string)))[0]
 
     # This only works if videos are sorted from the beginning from show the oldest video first
-    firstPlaylist.sort(key=sortVideosNumerically)
-    lastPlaylist.sort(key=sortVideosNumerically)
+    firstPlaylist.sort(key=sortVideosNumerically, reverse=True)
+    lastPlaylist.sort(key=sortVideosNumerically, reverse=True)
 
-    print(firstPlaylist[0])
-    print(lastPlaylist[0])
+    print(firstPlaylist[-1])
+    print(lastPlaylist[-1])
 
-    firstPlaylistDeletedVideos = getVideoIndexNumber(firstPlaylist[0])
-    lastPlaylistDeletedVideos = getVideoIndexNumber(lastPlaylist[0])
+    firstPlaylistDeletedVideos = getVideoIndexNumber(firstPlaylist[-1])
+    lastPlaylistDeletedVideos = getVideoIndexNumber(lastPlaylist[-1])
 
-    print(firstPlaylistDeletedVideos[1])
-    print(lastPlaylistDeletedVideos[1])
-
-    if lastPlaylistDeletedVideos > firstPlaylistDeletedVideos:
-        # prints only the two playlists including the index number and the 0. number of missing videos
-        compare(firstPlaylist, lastPlaylist)
+    if firstPlaylistDeletedVideos == lastPlaylistDeletedVideos:
+        print("No videos went missing ...")
+    else:
+        print("Videos are missing. Trying now to recover them")
         firstPlaylist = removeVideoIndex(firstPlaylist)
         lastPlaylist = removeVideoIndex(lastPlaylist)
-        # if first video of old playlist was found in the new playlist start the comparing
-        for video in firstPlaylist:
-            if video.
-            # for vid in lastPlaylist:
-            #     if video == vid:
-            #         # GOTCHA, lists are now sync
-            #         continue
-            #     else:
-            #         print(vid, " is missing")
+        # print(firstPlaylist)
+        # print(lastPlaylist)
+        firstPlaylist.sort(key=sortVideosNumerically)
+        lastPlaylist.sort(key=sortVideosNumerically)
+        # print(firstPlaylist)
+        # print(lastPlaylist)
+        # remove Uploader and compare lists
+        firstPlaylist = removeUploader(firstPlaylist)
 
+        for subString in playlistWithoutUploader:
+            videoFound = False
+            for video in lastPlaylist:
+                if subString in video:
+                    # print("Video found: ", subString)
+                    videoFound = True
+                    break
+            if not videoFound:
+                print("this video is missing: ", subString)
 
-    indexVideosMissing = []
+            # if video in lastPlaylist:
+            #     print("Video found")
+            # else:
+            #     print("Problem: Video wasn't found ...")
 
-    for video in lastPlaylist:
-        if "- Deleted video.jpg" in video or "- Private video.jpg" in video:
-            if DEBUG:
-                print("This video got removed: ", video)
-            videoNumber = re.findall(r"\d+\b", video)
-            indexVideosMissing += videoNumber
-            # print(videoNumber)
+    # index[-1] from both lists, if index number is not the same, can recover deleted videos
+    #    both lists remove list.index[-1]
+    #    firstPlaylist[0].removeVideoIndexNumber find subString in lastPlaylist
+    #    if found:
+    #        print("all clear")
+    #    else:
+    #        print("not found THIS video")
 
+    # indexVideosMissing = []
+
+    # for video in lastPlaylist:
+    #     if "- Deleted video.jpg" in video or "- Private video.jpg" in video:
+    #         if DEBUG:
+    #             print("This video got removed: ", video)
+    #         videoNumber = re.findall(r"\d+\b", video)
+    #         indexVideosMissing += videoNumber
+    # print(videoNumber)
     # print(indexVideosMissing)
-    videoNumbersInt = [int(x) for x in indexVideosMissing]
-    if DEBUG:
-        print(videoNumbersInt)
+
+    # videoNumbersInt = [int(x) for x in indexVideosMissing]
 
     # for i in videoNumbersInt:
     #     vid = firstPlaylist[i]
@@ -114,7 +139,7 @@ def doWork():
     # print(type(indexVideosMissing[0]))
 
 
-os.chdir("Music")
+os.chdir("Nirvana")
 lista = os.listdir()
 doWork()
 

@@ -30,12 +30,12 @@ deletedVideos = 0
 
 def checkForPrivacy(playlistid):
     url = (
-            "https://www.googleapis.com/youtube/v3/playlistItems?key="
-            + apiKey
-            + "&playlistId="
-            + playlistid[0]
-            + "&part="
-            + part
+        "https://www.googleapis.com/youtube/v3/playlistItems?key="
+        + apiKey
+        + "&playlistId="
+        + playlistid[0]
+        + "&part="
+        + part
     )
 
     json = getJSON(url)
@@ -58,15 +58,15 @@ def checkForPrivacy(playlistid):
 
 def doRequest(elListo, pageToken=""):
     url = (
-            "https://www.googleapis.com/youtube/v3/playlistItems?key="
-            + apiKey
-            + "&playlistId="
-            + elListo
-            + "&part="
-            + part
-            + "&maxResults=50"
-            + "&pageToken="
-            + pageToken
+        "https://www.googleapis.com/youtube/v3/playlistItems?key="
+        + apiKey
+        + "&playlistId="
+        + elListo
+        + "&part="
+        + part
+        + "&maxResults=50"
+        + "&pageToken="
+        + pageToken
     )
 
     if DEBUG:
@@ -80,14 +80,16 @@ def doRequest(elListo, pageToken=""):
         try:
             # Preparing youtube info data
             actualTitle = requestJSON["items"][i]["snippet"]["title"]
-            actualVideoPostion = (
-                    requestJSON["items"][i]["snippet"]["position"] + 1
+            global actualVideoPosition
+            actualVideoPosition = (
+                requestJSON["items"][i]["snippet"]["position"] + 1
             )  # so that counting starts not from 0
-            generalInformation = requestJSON["pageInfo"]["totalResults"]  # 91
+            generalInformation = requestJSON["pageInfo"]["totalResults"]
 
             if actualTitle == "Deleted video" or actualTitle == "Private video":
-                videoData = str(actualVideoPostion) + " - " + actualTitle
-                # actualVideoPostion += 1
+                actualVideoPosition = actualVideoPosition - 1
+                videoData = "(" + str(actualVideoPosition) + ")" + " - " + actualTitle
+                # ToDo here must be the global keyword be set
                 print(videoData)
                 file = open(videoData + ".jpg", "wb")
                 file.close()
@@ -108,22 +110,22 @@ def doRequest(elListo, pageToken=""):
                 "medium"
             ]["url"]
 
-            # print("actualVideoPosition: ", actualVideoPostion)
+            # print("actualVideoPosition: ", actualVideoPosition)
             # print("generalInformation: ", generalInformation)
 
             videoData = (
-                    str(actualVideoPostion)
-                    + " - "
-                    + actualTitle
-                    + " by "
-                    + actualChannelName
+                str(actualVideoPosition)
+                + " - "
+                + actualTitle
+                + " by "
+                + actualChannelName
             )
 
             try:
                 file = open(videoData + ".jpg", "wb")
             except OSError:
                 file = open(
-                    str(actualVideoPostion)
+                    str(actualVideoPosition)
                     + " - "
                     + slugify(actualTitle)
                     + " by "
@@ -139,7 +141,7 @@ def doRequest(elListo, pageToken=""):
 
             print(videoData)
 
-            if actualVideoPostion == generalInformation:
+            if actualVideoPosition == generalInformation:
                 break
 
         except Exception as Error:
