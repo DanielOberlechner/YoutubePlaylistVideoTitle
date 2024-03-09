@@ -1,6 +1,3 @@
-LilPeep = {"LiL P33P": "PLuP1wAti74xCAhJxZwZCjnrA6iF3gjucr"}
-print(LilPeep['LiL P33P'])
-
 import json
 import requests
 import re
