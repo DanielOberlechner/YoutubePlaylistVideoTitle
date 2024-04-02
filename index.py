@@ -6,8 +6,8 @@ import os
 
 from functions import slugify, getJSON
 
-currentDate = datetime.datetime.now().strftime("%Y-%m-%d.txt")
 apiKey = ""
+currentDate = datetime.datetime.now().strftime("%Y-%m-%d")
 errorOccurred = False
 
 # Playlists Examples
@@ -72,28 +72,21 @@ def doRequest(elListo, pageToken=""):
             actualVideoPostion = requestJSON["items"][i]["snippet"]["position"] + 1
             generalInformation = requestJSON["pageInfo"]["totalResults"]
 
+            # special case when video got deleted or set to private
             if actualTitle == "Deleted video" or actualTitle == "Private video":
                 videoData = str(actualVideoPostion) + " - " + actualTitle
                 print(videoData)
                 file = open(videoData + ".jpg", "wb")
-                # file.write(thumbnail.content)
                 file.close()
                 global deletedVideos
                 deletedVideos += 1
                 continue
 
             actualChannelName = requestJSON["items"][i]["snippet"]["videoOwnerChannelTitle"]
+            actualThumbnail = requestJSON["items"][i]["snippet"]["thumbnails"]["high"]["url"]
 
-            try:
-                actualThumbnail = requestJSON["items"][i]["snippet"]["thumbnails"]["maxres"]["url"]
-            except:
-                actualThumbnail = requestJSON["items"][i]["snippet"]["thumbnails"]["high"]["url"]
-
-            if actualVideoPostion == generalInformation - 1:
-                print("All Videos got captured by this script successfully! :)")
-                break
-
-            videoData = str(actualVideoPostion) + " - " + actualTitle + " by " + actualChannelName
+            # special case if slash in string cannot write file and must get disarmed
+            videoData = str(actualVideoPostion) + " - " + actualTitle.replace("/", " ") + " by " + actualChannelName.replace("/", " ")
 
             try:
                 file = open(videoData + ".jpg", "wb")
@@ -107,9 +100,14 @@ def doRequest(elListo, pageToken=""):
 
             print(videoData)
 
+            # abort downloading when last video is reached and don't throw error
+            if actualVideoPostion  == generalInformation:
+                print("All Videos got captured by this script successfully! :)")
+                break
+
         except Exception as Error:
             print("A error has occurred! continue with next video ... " + videoData + " this video could have a problem")
-            print(Error.with_traceback())
+            print(Error)
             continue
 
     try:
@@ -135,7 +133,7 @@ def Work():
             else:
                 os.chdir(currentDate)
             checkForPrivacy(playlist)
-            string = f"0 - the're {deletedVideos} deletedVideos"
+            string = f"0 - there are {deletedVideos} deleted videos"
             file = open(string, "w")
             file.close()
             os.chdir("../../")
