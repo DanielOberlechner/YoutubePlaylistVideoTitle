@@ -9,6 +9,7 @@ from functions import slugify, getJSON
 apiKey = ""
 currentDate = datetime.datetime.now().strftime("%Y-%m-%d")
 errorOccurred = False
+debug = False
 
 # Playlists Examples
 Music = ["PLAYLIST_ID", "Music"]
@@ -61,7 +62,10 @@ def doRequest(elListo, pageToken=""):
             + pageToken
     )
 
-    print(url)
+    # when debugging show Youtube API json url
+    if debug:
+        print(url)
+
     requestJSON = getJSON(url)
 
     for i in range(50):
@@ -101,7 +105,7 @@ def doRequest(elListo, pageToken=""):
             print(videoData)
 
             # abort downloading when last video is reached and don't throw error
-            if actualVideoPostion  == generalInformation:
+            if actualVideoPostion == generalInformation:
                 print("All Videos got captured by this script successfully! :)")
                 break
 
